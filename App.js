@@ -17,7 +17,7 @@ export default function App() {
   return (
     <SafeAreaProvider>
       <StatusBar barStyle="light-content" />
-      <SafeAreaView className="bg-slate-900">
+      <SafeAreaView className="flex-1 bg-slate-900">
         <Text className="text-2xl text-center font-bold text-slate-300">User Panel</Text>
 
         <RoleFilter
