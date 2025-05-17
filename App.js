@@ -1,6 +1,6 @@
 import { FlatList, StatusBar, Text } from 'react-native';
 import "./global.css";
-import { SafeAreaView } from 'react-native-safe-area-context';
+import { SafeAreaProvider, SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 import UserItem from './components/UserItem';
 import UserDetails from './components/UserDetails';
@@ -15,25 +15,27 @@ export default function App() {
   const filteredUsers = users.filter(user => user.role === selectedRole || selectedRole === 'All');
 
   return (
-    <SafeAreaView className="flex flex-col flex-1 bg-slate-900 p-0">
+    <SafeAreaProvider>
       <StatusBar barStyle="light-content" />
-      <Text className="mt-4 text-2xl text-center font-bold text-slate-300">User Panel</Text>
+      <SafeAreaView className="bg-slate-900">
+        <Text className="text-2xl text-center font-bold text-slate-300">User Panel</Text>
 
-      <RoleFilter
-        selectedRole={selectedRole}
-        onRoleSelect={setSelectedRole}
-        roles={Array.from(new Set(users.map(user => user.role))).sort()}
-      />
+        <RoleFilter
+          selectedRole={selectedRole}
+          onRoleSelect={setSelectedRole}
+          roles={Array.from(new Set(users.map(user => user.role))).sort()}
+        />
 
-      <FlatList
-        data={filteredUsers}
-        keyExtractor={user => user.id}
-        renderItem={({ item }) => (
-          <UserItem user={item} onUserPress={() => setSelectedUser(item)} />
-        )}
-      />
+        <FlatList
+          data={filteredUsers}
+          keyExtractor={user => user.id}
+          renderItem={({ item }) => (
+            <UserItem user={item} onUserPress={() => setSelectedUser(item)} />
+          )}
+        />
 
-      <UserDetails user={selectedUser} onModalClose={() => setSelectedUser(null)} />
-    </SafeAreaView>
+        <UserDetails user={selectedUser} onModalClose={() => setSelectedUser(null)} />
+      </SafeAreaView>
+    </SafeAreaProvider>
   );
 }
