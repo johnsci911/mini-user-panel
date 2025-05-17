@@ -1,4 +1,4 @@
-import { FlatList, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, StatusBar, Text } from 'react-native';
 import "./global.css";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
@@ -15,7 +15,8 @@ export default function App() {
   const filteredUsers = users.filter(user => user.role === selectedRole || selectedRole === 'All');
 
   return (
-    <SafeAreaView className="flex flex-col flex-1 bg-slate-900">
+    <SafeAreaView className="flex flex-col flex-1 bg-slate-900 p-0">
+      <StatusBar barStyle="light-content" />
       <Text className="mt-4 text-2xl text-center font-bold text-slate-300">User Panel</Text>
 
       <RoleFilter
