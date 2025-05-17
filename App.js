@@ -18,38 +18,38 @@ const users = [
   { id: '10', name: 'Joshua Taylor', email:'joshua@example.com', role: 'engineer', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
 ]
 
-const UserItem = ({ user, onUserPress }) => (
-  <TouchableOpacity onPress={onUserPress} className="p-4 border-b border-slate-800">
-    <Text className="text-xl font-bold text-slate-400">{user.name}</Text>
-    <Text className="text-sm text-slate-500">{user.email}</Text>
-    <Text className="text-sm text-slate-600">{user.role.charAt(0).toUpperCase() + user.role.slice(1)}</Text>
-  </TouchableOpacity>
-)
-
-const UserDetails = ({ user, onModalClose }) => (
-  <Modal visible={!!user} onRequestClose={onModalClose} transparent>
-    <View className="flex-1 justify-center items-center bg-slate-900 bg-opacity-25">
-      {user && (
-        <View className="w-3/4 py-4 bg-slate-200 rounded-lg shadow-md">
-          <View className="px-4">
-            <Text className="text-2xl font-bold">{user.name}</Text>
-            <Text className="text-slate-500">{user.email}</Text>
-            <Text className="text-lg font-medium text-slate-600">Role: {user.role.charAt(0).toUpperCase() + user.role.slice(1)}</Text>
-
-          </View>
-          <View className="mt-1 p-4 bg-slate-300">
-            <Text className="text-md font-medium text-slate-800">Description:</Text>
-            <Text className="font-normal text-sm text-slate-700">{user.description}</Text>
-          </View>
-          <View className="flex items-end px-4">
-            <TouchableOpacity onPress={onModalClose} className="mt-4 bg-slate-300 px-4 py-3 rounded-lg">
-              <Text className="text-red-400 font-bold text-lg">Close</Text>
-            </TouchableOpacity>
-          </View>
-        </View>
-      )}
+const RoleFilter = ({ selectedRole, onRoleSelect, roles }) => (
+  <View className="flex-row mt-4 bg-slate-800">
+    <View>
+      <Text className="text-slate-300 ml-4 my-auto text-xl font-bold">Role:</Text>
     </View>
-  </Modal>
+
+    <ScrollView
+      horizontal
+      showsHorizontalScrollIndicator={false}
+      contentContainerStyle={{
+        flexGrow: 1,
+        justifyContent: 'flex-start',
+        paddingHorizontal: 0,
+      }}
+      className="flex-1 m-4"
+    >
+      <TouchableOpacity
+        className={`bg-slate-700 mr-2 py-2 px-4 rounded-md ${selectedRole === 'All' ? 'bg-blue-600' : ''}`}
+        onPress={() => onRoleSelect('All')}
+      >
+        <Text className="text-slate-50">All</Text>
+      </TouchableOpacity>
+      {roles.map((role) => (
+        <TouchableOpacity
+          className={`bg-slate-700 mr-2 py-2 px-4 rounded-md ${selectedRole === role ? 'bg-blue-600' : ''}`}
+          onPress={() => onRoleSelect(role)}
+        >
+          <Text className="text-slate-50">{role.charAt(0).toUpperCase() + role.slice(1)}</Text>
+        </TouchableOpacity>
+      ))}
+    </ScrollView>
+  </View>
 )
 
 export default function App() {
@@ -62,73 +62,11 @@ export default function App() {
     <SafeAreaView className="flex flex-col flex-1 bg-slate-900">
       <Text className="mt-4 text-2xl text-center font-bold text-slate-300">User Panel</Text>
 
-      <View className="flex-row mt-4 bg-slate-800">
-        <View>
-          <Text className="text-slate-300 ml-4 my-auto text-xl font-bold">Role:</Text>
-        </View>
-
-        <ScrollView
-          horizontal
-          showsHorizontalScrollIndicator={false}
-          contentContainerStyle={{
-            flexGrow: 1,
-            justifyContent: 'flex-start',
-            paddingHorizontal: 0,
-          }}
-          className="flex-1 m-4"
-        >
-          <TouchableOpacity
-            className="bg-slate-700 py-2 px-4 rounded-md"
-            onPress={() => setSelectedRole('All')}
-          >
-            <Text className="text-slate-50">All</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className="ml-4 bg-slate-700 py-2 px-4 rounded-md"
-            onPress={() => setSelectedRole('admin')}
-          >
-            <Text className="text-slate-50">Admin</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            className="ml-4 bg-slate-700 py-2 px-4 rounded-md"
-            onPress={() => setSelectedRole('user')}
-          >
-            <Text className="text-slate-50">User</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="ml-4 bg-slate-700 py-2 px-4 rounded-md"
-            onPress={() => setSelectedRole('developer')}
-          >
-            <Text className="text-slate-50">Developer</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="ml-4 bg-slate-700 py-2 px-4 rounded-md"
-            onPress={() => setSelectedRole('manager')}
-          >
-            <Text className="text-slate-50">Manager</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="ml-4 bg-slate-700 py-2 px-4 rounded-md"
-            onPress={() => setSelectedRole('chef')}
-          >
-            <Text className="text-slate-50">Chef</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="ml-4 bg-slate-700 py-2 px-4 rounded-md"
-            onPress={() => setSelectedRole('engineer')}
-          >
-            <Text className="text-slate-50">Engineer</Text>
-          </TouchableOpacity>
-          <TouchableOpacity
-            className="ml-4 bg-slate-700 py-2 px-4 rounded-md"
-            onPress={() => setSelectedRole('secretary')}
-          >
-            <Text className="text-slate-50">Secretary</Text>
-          </TouchableOpacity>
-        </ScrollView>
-      </View>
+      <RoleFilter
+        selectedRole={selectedRole}
+        onRoleSelect={setSelectedRole}
+        roles={Array.from(new Set(users.map(user => user.role))).sort()}
+      />
 
       <FlatList
         data={filteredUsers}
