@@ -1,19 +1,19 @@
-import { FlatList, ScrollView, Text, TouchableOpacity, View } from 'react-native';
+import { FlatList, Modal, ScrollView, Text, TouchableOpacity, View } from 'react-native';
 import "./global.css";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useState } from 'react';
 
 const users = [
-  { id: '1', name: 'John Karlo', email: 'johnkarlo@example.com', role: 'admin' },
-  { id: '2', name: 'Jane Doe', email: 'janedoe@example.com', role: 'user' },
-  { id: '3', name: 'Mike Smith', email:'mikesmith@example.com', role: 'user' },
-  { id: '4', name: 'Sarah Johnson', email:'sarahjohnson@example.com', role: 'developer' },
-  { id: '5', name: 'David Wilson', email:'davidwilson@example.com', role: 'manager' },
-  { id: '6', name: 'Emily Davis', email:'emilydavis@example.com', role: 'chef' },
-  { id: '7', name: 'Daniel Brown', email:'danielbrown@example.com', role: 'engineer' },
-  { id: '8', name: 'Olivia Wilson', email:'oliviawilson@example.com', role: 'receptionist' },
-  { id: '9', name: 'Christopher Thompson', email:'christopherthompson@example.com', role: 'secretary' },
-  { id: '10', name: 'Joshua Taylor', email:'joshua@example.com', role: 'engineer' },
+  { id: '1', name: 'John Karlo', email: 'johnkarlo@example.com', role: 'admin', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+  { id: '2', name: 'Jane Doe', email: 'janedoe@example.com', role: 'user', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+  { id: '3', name: 'Mike Smith', email:'mikesmith@example.com', role: 'user', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+  { id: '4', name: 'Sarah Johnson', email:'sarahjohnson@example.com', role: 'developer', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+  { id: '5', name: 'David Wilson', email:'davidwilson@example.com', role: 'manager', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+  { id: '6', name: 'Emily Davis', email:'emilydavis@example.com', role: 'chef', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+  { id: '7', name: 'Daniel Brown', email:'danielbrown@example.com', role: 'engineer', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+  { id: '8', name: 'Olivia Wilson', email:'oliviawilson@example.com', role: 'receptionist', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+  { id: '9', name: 'Christopher Thompson', email:'christopherthompson@example.com', role: 'secretary', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
+  { id: '10', name: 'Joshua Taylor', email:'joshua@example.com', role: 'engineer', description: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.' },
 ]
 
 const UserItem = ({ user, onUserPress }) => (
@@ -24,15 +24,41 @@ const UserItem = ({ user, onUserPress }) => (
   </TouchableOpacity>
 )
 
+const UserDetails = ({ user, onModalClose }) => (
+  <Modal visible={!!user} onRequestClose={onModalClose} transparent>
+    <View className="flex-1 justify-center items-center bg-slate-900 bg-opacity-25">
+      {user && (
+        <View className="w-3/4 py-4 bg-slate-200 rounded-lg shadow-md">
+          <View className="px-4">
+            <Text className="text-2xl font-bold">{user.name}</Text>
+            <Text className="text-slate-500">{user.email}</Text>
+            <Text className="text-lg font-medium text-slate-600">Role: {user.role.charAt(0).toUpperCase() + user.role.slice(1)}</Text>
+
+          </View>
+          <View className="mt-1 p-4 bg-slate-300">
+            <Text className="text-md font-medium text-slate-800">Description:</Text>
+            <Text className="font-normal text-sm text-slate-700">{user.description}</Text>
+          </View>
+          <View className="flex items-end px-4">
+            <TouchableOpacity onPress={onModalClose} className="mt-4 bg-slate-300 px-4 py-3 rounded-lg">
+              <Text className="text-red-400 font-bold text-lg">Close</Text>
+            </TouchableOpacity>
+          </View>
+        </View>
+      )}
+    </View>
+  </Modal>
+)
+
 export default function App() {
   const [selectedRole, setSelectedRole] = useState('All');
+  const [selectedUser, setSelectedUser] = useState(null);
 
   const filteredUsers = users.filter(user => user.role === selectedRole || selectedRole === 'All');
 
-
   return (
-    <SafeAreaView className="flex flex-col flex-1 bg-slate-900 py-4">
-      <Text className="text-2xl text-center font-bold text-slate-300">User Panel</Text>
+    <SafeAreaView className="flex flex-col flex-1 bg-slate-900 px-4">
+      <Text className="mt-4 text-2xl text-center font-bold text-slate-300">User Panel</Text>
 
       <View className="flex-row mt-4 bg-slate-800">
         <View>
@@ -106,9 +132,11 @@ export default function App() {
         data={filteredUsers}
         keyExtractor={user => user.id}
         renderItem={({ item }) => (
-          <UserItem user={item} onUserPress={() => console.log('User pressed:', item.name)} />
+          <UserItem user={item} onUserPress={() => setSelectedUser(item)} />
         )}
       />
+
+      <UserDetails user={selectedUser} onModalClose={() => setSelectedUser(null)} />
     </SafeAreaView>
   );
 }
